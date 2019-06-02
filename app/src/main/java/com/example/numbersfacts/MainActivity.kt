@@ -2,23 +2,18 @@ package com.example.numbersfacts
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.example.numbersfacts.model.Responses
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.example.numbersfacts.model.Request
+import com.example.numbersfacts.model.TmdbMovieResponse
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.*
 import retrofit2.HttpException
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.POST
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,9 +29,10 @@ class MainActivity : AppCompatActivity() {
 
         fab.setOnClickListener { view ->
 
-            val factNum = main_editText.text.toString()
+            val factNum = main_editText.text.toString().trim()
             if (factNum.isNotEmpty()) {
                 numbersAPI()
+                main_text_view.text = factNum
             } else {
                 Toast.makeText(this@MainActivity, "Enter a number...", Toast.LENGTH_SHORT).show()
             }
@@ -83,15 +79,22 @@ class MainActivity : AppCompatActivity() {
     fun cancelJob() {
         viewModelJob.cancel()
     }
+
     fun numbersAPI(){
+
+        println("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         val service = RetrofitFactory.makeRetrofitService()
         CoroutineScope(Dispatchers.IO).launch {
-            val request = service.getPosts()
+            val factNum1 = main_editText.text.toString().trim()
+            val request = service.getPosts(factNum1)
             try {
                 val response = request.await()
                 withContext(Dispatchers.Default) {
                     if (response.isSuccessful) {
-                        response.body()?.let { initRecyclerView(it) }
+//                        response.body()?.let { initRecyclerView(it) }
+//                        println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${response.body()}")
+                        var test1 = response.body()?: listOf()
+                        println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${test1}")
                     } else {
 //                        toast("Error network operation failed with ${response.code()}")
                         Toast.makeText(this@MainActivity, "Error network operation failed with ${response.code()}", Toast.LENGTH_LONG).show()
@@ -100,29 +103,14 @@ class MainActivity : AppCompatActivity() {
             } catch (e: HttpException) {
                 Log.e("REQUEST", "Exception ${e.message}")
             } catch (e: Throwable) {
-                Log.e("REQUEST", "Ooops: Something else went wrong")
+                Log.e("REQUEST", "Ooops11: Something else went wrong")
             }
         }
     }
-//    interface RetrofitService {
-//        @GET("/posts")
-//        fun getPosts(): Deferred<Response<List<Responses>>>
-//    }
-//
-//    object RetrofitFactory {
-//        const val BASE_URL = "https://jsonplaceholder.typicode.com"
-//
-//        fun makeRetrofitService(): RetrofitService {
-//            return Retrofit.Builder()
-//                .baseUrl(endpoint)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .addCallAdapterFactory(CoroutineCallAdapterFactory())
-//                .build().create(RetrofitService::class.java)
-//        }
-//    }
 
-    private fun initRecyclerView(list: List<Responses>) {
-        main_text_view.text = "fewifn34ifn8435fhj84uf038904fqw8ehjf"
+
+    private fun initRecyclerView(list: List<Request>) {
+        main_text_view.text = list.toString()
 
 
 

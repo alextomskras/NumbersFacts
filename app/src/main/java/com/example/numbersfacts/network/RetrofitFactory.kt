@@ -1,7 +1,10 @@
 package com.example.numbersfacts
 
 import android.widget.Toast
+import com.example.numbersfacts.model.Responses
+import com.example.numbersfacts.model.TmdbMovieResponse
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -16,8 +19,16 @@ object RetrofitFactory {
     const val BASE_URL = "http://numbersapi.com"
 
 
+
+
+
     fun makeRetrofitService(): RetrofitService {
+
+
+        println("TTTTTTTTTTTTTTTTTTTTT")
+
         return Retrofit.Builder()
+
             .baseUrl(BASE_URL)
             .client(makeOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
@@ -26,7 +37,9 @@ object RetrofitFactory {
     }
 
     private fun makeOkHttpClient(): OkHttpClient {
+
         return OkHttpClient.Builder()
+
             .addInterceptor(makeLoggingInterceptor())
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
