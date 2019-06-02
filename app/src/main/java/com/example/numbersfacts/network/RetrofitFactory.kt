@@ -1,16 +1,10 @@
 package com.example.numbersfacts
 
-import android.widget.Toast
-import com.example.numbersfacts.model.Responses
-import com.example.numbersfacts.model.TmdbMovieResponse
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 import java.util.concurrent.TimeUnit
 
 object RetrofitFactory {
@@ -40,7 +34,10 @@ object RetrofitFactory {
 
         return OkHttpClient.Builder()
 
-            .addInterceptor(makeLoggingInterceptor())
+            .addInterceptor(makeLoggingInterceptor().apply {
+                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            })
+
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
             .writeTimeout(90, TimeUnit.SECONDS)

@@ -7,13 +7,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.example.numbersfacts.model.Request
-import com.example.numbersfacts.model.TmdbMovieResponse
-
+import com.example.numbersfacts.model.Results
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import kotlinx.coroutines.CoroutineScope as CoroutineScope1
 
 class MainActivity : AppCompatActivity() {
 
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var viewModelJob = Job()
-    private val viewModelScope = CoroutineScope(context = Dispatchers.Default + viewModelJob)
+    private val viewModelScope = CoroutineScope1(context = Dispatchers.Default + viewModelJob)
 
     fun doWork() {
         var result = 1.0
@@ -84,32 +83,35 @@ class MainActivity : AppCompatActivity() {
 
         println("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         val service = RetrofitFactory.makeRetrofitService()
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope1(Dispatchers.IO).launch {
             val factNum1 = main_editText.text.toString().trim()
             val request = service.getPosts(factNum1)
             try {
                 val response = request.await()
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
 //                        response.body()?.let { initRecyclerView(it) }
 //                        println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${response.body()}")
-                        var test1 = response.body()?: listOf()
+                        var test1 = response.body()
                         println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${test1}")
+                        main_text_view.text = test1?.text.toString()
                     } else {
 //                        toast("Error network operation failed with ${response.code()}")
                         Toast.makeText(this@MainActivity, "Error network operation failed with ${response.code()}", Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: HttpException) {
+                // Catch http errors
                 Log.e("REQUEST", "Exception ${e.message}")
             } catch (e: Throwable) {
-                Log.e("REQUEST", "Ooops11: Something else went wrong")
+                // All other exceptions (non-http)
+                Log.e("REQUEST", "Ooops11: Something else went wrong ${e.message}")
             }
         }
     }
 
 
-    private fun initRecyclerView(list: List<Request>) {
+    private fun initRecyclerView(list: List<Results>) {
         main_text_view.text = list.toString()
 
 
