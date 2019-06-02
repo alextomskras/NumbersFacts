@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 //                        println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${response.body()}")
                         var test1 = response.body()
                         println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${test1}")
-                        main_text_view.text = test1?.text.toString()
+                        main_text_view.text = test1?.text.toString().trim()
                     } else {
 //                        toast("Error network operation failed with ${response.code()}")
                         Toast.makeText(this@MainActivity, "Error network operation failed with ${response.code()}", Toast.LENGTH_LONG).show()
