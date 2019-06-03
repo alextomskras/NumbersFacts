@@ -1,11 +1,13 @@
 package com.example.numbersfacts
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import com.example.numbersfacts.model.Results
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,18 +27,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+//        var textVisible = main_text_view.visibility
+
+        //clear & hide textView and CardView
+        cardView.visibility = View.GONE
+        main_text_view.visibility = View.GONE
 
         fab.setOnClickListener { view ->
 
             val factNum = main_editText.text.toString().trim()
             if (factNum.isNotEmpty()) {
-                numbersAPI()
                 main_text_view.text = factNum
+                numbersAPI()
+                //start progress dialog
+
+                DisplayProgressDialog()
             } else {
                 Toast.makeText(this@MainActivity, "Enter a number...", Toast.LENGTH_SHORT).show()
             }
 
-            doWork()
+//            doWork()
 
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
@@ -84,17 +94,29 @@ class MainActivity : AppCompatActivity() {
         println("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         val service = RetrofitFactory.makeRetrofitService()
         CoroutineScope1(Dispatchers.IO).launch {
+            //check user input's
             val factNum1 = main_editText.text.toString().trim()
             val request = service.getPosts(factNum1)
             try {
                 val response = request.await()
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
+
+                        //cancel progress dialog
+                        pDialog.dismiss()
+
 //                        response.body()?.let { initRecyclerView(it) }
 //                        println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${response.body()}")
+
+                        //check network API response
                         var test1 = response.body()
-                        println("!!!!!!!!!!!!!!!!!!!!!!!!!!! ${test1}")
+
+                        println("+++++++++ ${test1}")
                         main_text_view.text = test1?.text.toString().trim()
+
+                        //apply VISIBLE for answer text
+                        cardView.visibility = View.VISIBLE
+                        main_text_view.visibility = View.VISIBLE
                     } else {
 //                        toast("Error network operation failed with ${response.code()}")
                         Toast.makeText(this@MainActivity, "Error network operation failed with ${response.code()}", Toast.LENGTH_LONG).show()
@@ -105,7 +127,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("REQUEST", "Exception ${e.message}")
             } catch (e: Throwable) {
                 // All other exceptions (non-http)
-                Log.e("REQUEST", "Ooops11: Something else went wrong ${e.message}")
+                Log.e("REQUEST", "Ooops: Something else went wrong ${e.message}")
             }
         }
     }
@@ -117,6 +139,18 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    }
+
+    //apply progress bar dialog
+    lateinit var pDialog: ProgressDialog
+
+    fun DisplayProgressDialog() {
+
+        pDialog = ProgressDialog(this@MainActivity)
+        pDialog.setMessage("Loading..")
+        pDialog.setCancelable(false)
+        pDialog.isIndeterminate = false
+        pDialog.show()
     }
 
 
