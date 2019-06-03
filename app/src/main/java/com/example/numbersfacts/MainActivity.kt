@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 //        var textVisible = main_text_view.visibility
 
-        //clear & hide textView and CardView
+        //clear & hide textView and CardView and ProgressBar_Widget
         progressBar.visibility = View.GONE
         cardView.visibility = View.GONE
         main_text_view.visibility = View.GONE
@@ -39,11 +39,14 @@ class MainActivity : AppCompatActivity() {
             val factNum = main_editText.text.toString().trim()
             if (factNum.isNotEmpty()) {
                 main_text_view.text = factNum
-                numbersAPI()
-                //start progress dialog
 
+                //start - network request to API
+                numbersAPI()
+
+                //start progress dialog
                 DisplayProgressDialog()
-                progressBar.visibility = View.VISIBLE
+                //start progressBar_Widget
+//                progressBar.visibility = View.VISIBLE
             } else {
                 Toast.makeText(this@MainActivity, "Enter a number...", Toast.LENGTH_SHORT).show()
             }
@@ -104,8 +107,9 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
 
+                        //cancel progressBar_Widget
+//                        progressBar.visibility = View.GONE
                         //cancel progress dialog
-                        progressBar.visibility = View.GONE
                         pDialog.dismiss()
 
 //                        response.body()?.let { initRecyclerView(it) }
