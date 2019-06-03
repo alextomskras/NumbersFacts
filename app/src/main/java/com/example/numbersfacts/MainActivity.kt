@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 //        var textVisible = main_text_view.visibility
 
         //clear & hide textView and CardView
+        progressBar.visibility = View.GONE
         cardView.visibility = View.GONE
         main_text_view.visibility = View.GONE
 
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                 //start progress dialog
 
                 DisplayProgressDialog()
+                progressBar.visibility = View.VISIBLE
             } else {
                 Toast.makeText(this@MainActivity, "Enter a number...", Toast.LENGTH_SHORT).show()
             }
@@ -103,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
 
                         //cancel progress dialog
+                        progressBar.visibility = View.GONE
                         pDialog.dismiss()
 
 //                        response.body()?.let { initRecyclerView(it) }
