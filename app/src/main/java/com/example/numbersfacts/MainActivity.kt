@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     fun numbersAPI(){
 
-        println("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        println("!!!!!!!!!!!!_Start_Network_Request_!!!!!!!!!!!!!!!")
         val service = RetrofitFactory.makeRetrofitService()
         CoroutineScope1(Dispatchers.IO).launch {
             //check user input's
