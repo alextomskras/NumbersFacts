@@ -1,6 +1,7 @@
 package com.example.numbersfacts
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -17,9 +18,10 @@ import retrofit2.HttpException
 import kotlinx.coroutines.CoroutineScope as CoroutineScope1
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = "$this"
 
 
-      companion object{
+    companion object {
     val endpoint = "http://numbersapi.com/"
     }
 
@@ -69,14 +71,25 @@ class MainActivity : AppCompatActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+        Log.d(TAG, "onOptionsItemSelected called")
         return when (item.itemId) {
-            R.id.action_settings -> true
+//            val nextActivity = R.id.action_settings
+//            if (nextActivity != null) {
+//                val intent = Intent(this, PhotoDetailsActivity::class.java)
+//                intent.putExtra(PHOTO_TRANSFER, photo)
+//                startActivity(intent)
+//            }
+            R.id.action_settings -> {
+                startActivity(Intent(this, BottomActivity::class.java))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private var viewModelJob = Job()
-    private val viewModelScope = CoroutineScope1(context = Dispatchers.Default + viewModelJob)
+    private val viewModelScope = CoroutineScope1(context = Dispatchers.Main + viewModelJob)
 
     fun doWork() {
         var result = 1.0
@@ -100,8 +113,9 @@ class MainActivity : AppCompatActivity() {
         val service = RetrofitFactory.makeRetrofitService()
         CoroutineScope1(Dispatchers.IO).launch {
             //check user input's
+            val types = "math"
             val factNum1 = main_editText.text.toString().trim()
-            val request = service.getPosts(factNum1)
+            val request = service.getPosts(factNum1, types)
             try {
                 val response = request.await()
                 withContext(Dispatchers.Main) {

@@ -8,18 +8,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitFactory {
-//    const val BASE_URL = "https://jsonplaceholder.typicode.com"
+    //    const val BASE_URL = "https://jsonplaceholder.typicode.com"
 //    const val BASE_URL = R.string.baseurl.toString()
     const val BASE_URL = "http://numbersapi.com"
-
-
-
 
 
     fun makeRetrofitService(): RetrofitService {
 
 
-        println("TTTTTTTTTTTTTTTTTTTTT")
+        println("TTTTTTTTTTTTTTTTTTTTT$this")
 
         return Retrofit.Builder()
 
@@ -47,7 +44,7 @@ object RetrofitFactory {
     private fun makeLoggingInterceptor(): HttpLoggingInterceptor {
         val logging = HttpLoggingInterceptor()
         logging.level =
-                HttpLoggingInterceptor.Level.BODY
+            (if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE)
         return logging
     }
 

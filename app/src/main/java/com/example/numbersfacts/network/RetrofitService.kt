@@ -11,11 +11,21 @@ import retrofit2.http.Path
 //val poster
 //    get() = ($main_editText)
 
+//http://numbersapi.com/number/type
+
 
 //A retrofit Network Interface for the Api
 interface RetrofitService {
 
 
-    @GET(value = "{numbers}?json")
-    fun getPosts(@Path("numbers") numbers: String): Deferred<Response<Request>>
+    @GET(value = "{numbers}/{types}?json")
+    fun getPosts(
+        @Path("numbers") numbers: String,
+        @Path("types") types: String
+
+
+    ): Deferred<Response<Request>>
+
+//    @GET(value = "{dateYear}?json")
+//    fun getPosts(@Path("dateYear") dateYear: String): Deferred<Response<Request>>
 }
