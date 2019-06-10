@@ -3,12 +3,15 @@ package com.example.numbersfacts
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.example.numbersfacts.model.Results
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,12 +32,28 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+//        lateinit var bottomTextMessage: TextView
 //        var textVisible = main_text_view.visibility
 
         //clear & hide textView and CardView and ProgressBar_Widget
         progressBar.visibility = View.GONE
         cardView.visibility = View.GONE
         main_text_view.visibility = View.GONE
+
+
+//        main_yearText.visibility = View.GONE
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        bottomTextMessage = findViewById(R.id.bottomMessage)
+
+        lateinit var mainEditText: EditText
+
+        mainEditText = findViewById(R.id.main_editText)
+//        mainEditText = (android.R.layout.simple_list_item_activated_1)
+
+        val types = "date"
+
+//        bottomTextMessage = findViewById(R.id.bottomMessage)
+        navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
         fab.setOnClickListener { view ->
 
@@ -43,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 main_text_view.text = factNum
 
                 //start - network request to API
-                numbersAPI()
+                numbersAPI(types)
 
                 //start progress dialog
                 DisplayProgressDialog()
@@ -107,14 +126,15 @@ class MainActivity : AppCompatActivity() {
         viewModelJob.cancel()
     }
 
-    fun numbersAPI(){
+    fun numbersAPI(types: String) {
 
-        println("!!!!!!!!!!!!_Start_Network_Request_!!!!!!!!!!!!!!!")
+        println("!!!!!!!!!!!!_Start_Network_Request_!!!!!!!!!!!!!!!${this}")
         val service = RetrofitFactory.makeRetrofitService()
         CoroutineScope1(Dispatchers.IO).launch {
             //check user input's
-            val types = "math"
+//            val types = "date"
             val factNum1 = main_editText.text.toString().trim()
+
             val request = service.getPosts(factNum1, types)
             try {
                 val response = request.await()
@@ -172,6 +192,43 @@ class MainActivity : AppCompatActivity() {
         pDialog.setCancelable(false)
         pDialog.isIndeterminate = false
         pDialog.show()
+    }
+
+    private lateinit var bottomTextMessage: TextView
+
+
+    val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        when (item.itemId) {
+            R.id.navigation_home -> {
+                bottomTextMessage.setText(R.string.title_home)
+                val types = "trivia"
+                Toast.makeText(this@MainActivity, "HOME..." + types, Toast.LENGTH_SHORT).show()
+                numbersAPI(types)
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.navigation_dashboard -> {
+                bottomTextMessage.setText(R.string.title_dashboard)
+                val types = "math"
+//                main_editText.
+                Toast.makeText(this@MainActivity, "Dashboard... " + types, Toast.LENGTH_SHORT).show()
+                numbersAPI(types)
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.navigation_notifications -> {
+                bottomTextMessage.setText(R.string.title_notifications)
+                val types = "date"
+                Toast.makeText(this@MainActivity, "Notification..." + types, Toast.LENGTH_SHORT).show()
+                numbersAPI(types)
+//                main_yearText.visibility = View.VISIBLE
+//                val intent = Intent(this, YearActivity::class.java)
+//
+//                startActivity(intent)
+                //start_year-activity
+//                startActivity(Intent(this, YearActivity::class.java))
+                return@OnNavigationItemSelectedListener true
+            }
+        }
+        false
     }
 
 

@@ -12,6 +12,10 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
+        <activity android:name=".YearActivity"
+                  android:label="@string/YearActivity_st"
+                  android:parentActivityName=".MainActivity">
+        </activity>
         <activity
                 android:name=".BottomActivity"
                 android:label="@string/title_activity_bottom"
